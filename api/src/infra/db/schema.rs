@@ -1,6 +1,14 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    appointment (user_id, place_id) {
+        date -> Date,
+        user_id -> Bigint,
+        place_id -> Bigint,
+    }
+}
+
+diesel::table! {
     place (id) {
         id -> Bigint,
         #[max_length = 255]
@@ -33,7 +41,7 @@ diesel::table! {
     }
 }
 
-diesel::allow_tables_to_appear_in_same_query!(
-    place,
-    user,
-);
+diesel::joinable!(appointment -> place (place_id));
+diesel::joinable!(appointment -> user (user_id));
+
+diesel::allow_tables_to_appear_in_same_query!(appointment, place, user,);
