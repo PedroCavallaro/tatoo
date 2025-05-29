@@ -1,16 +1,25 @@
-use serde_derive::Deserialize;
+use crate::{
+    app::{
+        auth::http::dto::login_dto::LoginDTO,
+        user::infra::repositories::user_repository_abstract::UserRepositoryAbstract,
+    },
+    common::usecase::UseCase,
+    domain::error::ApiError,
+};
 
-use crate::{common::usecase::UseCase, domain::error::ApiError};
+pub struct LoginUseCase {
+    pub user_repository: Box<dyn UserRepositoryAbstract>,
+}
 
-pub struct LoginUseCase {}
-
-#[derive(Debug, Deserialize)]
-pub struct LoginDTO {
-    pub email: String,
+impl LoginUseCase {
+    pub fn new(user_repository: Box<dyn UserRepositoryAbstract>) -> Self {
+        Self { user_repository }
+    }
 }
 
 impl UseCase<(), LoginDTO> for LoginUseCase {
-    fn execute(_: LoginDTO) -> Result<(), ApiError> {
+    fn execute(&self, _: LoginDTO) -> Result<(), ApiError> {
+        self.user_repository.get_user().unwrap();
         todo!()
     }
 }

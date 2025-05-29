@@ -1,4 +1,6 @@
-use api::app::user::infra::repositories::user_repository::UserRepository;
+use api::app::user::infra::repositories::{
+    user_repository::UserRepository, user_repository_abstract::UserRepositoryAbstract,
+};
 use dotenv::dotenv;
 
 fn main() {
