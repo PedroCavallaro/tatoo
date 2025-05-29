@@ -1,8 +1,4 @@
-use std::{
-    env,
-    io::{Error, ErrorKind},
-    sync::OnceLock,
-};
+use std::{env, io::Error, sync::OnceLock};
 
 use diesel::{
     r2d2::{ConnectionManager, Pool, PooledConnection},
@@ -32,6 +28,6 @@ pub fn get_connection() -> Result<MysqlPoolConnection, Error> {
 
     match con {
         Ok(con) => Ok(con),
-        Err(_) => return Err(Error::new(ErrorKind::Other, "Pool error")),
+        Err(_) => Err(Error::other("pool error")),
     }
 }

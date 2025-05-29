@@ -6,5 +6,5 @@ fn main() {
 
     let user = UserRepository::new();
 
-    user.get_user();
+    user.get_user().unwrap();
 }
