@@ -1,10 +1,11 @@
 use diesel::*;
 
 use crate::{
-    domain::entities::user::User,
-    infra::db::{conn::get_pool, schema::user::dsl::*},
+    domain::{entities::user::User, error::ApiError},
+    infra::db::{conn::get_connection, schema::user::dsl::*},
 };
 
+#[derive(Default)]
 pub struct UserRepository {}
 
 impl UserRepository {
@@ -12,17 +13,13 @@ impl UserRepository {
         Self {}
     }
 
-    pub fn get_user(&self) {
-        let mut con = get_pool().get().unwrap();
+    pub fn get_user(&self) -> Result<Vec<User>, ApiError> {
+        let mut con = get_connection()?;
 
         let res = user.load::<User>(&mut con);
 
         println!("{:?}", res);
-    }
-}
 
-impl Default for UserRepository {
-    fn default() -> Self {
-        Self::new()
+        Ok(res.unwrap())
     }
 }

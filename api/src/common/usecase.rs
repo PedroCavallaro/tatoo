@@ -1,5 +1,5 @@
-use std::error::Error;
+use crate::domain::error::ApiError;
 
-pub trait UseCase<I, T> {
-    fn execute(input: I) -> Result<T, Box<dyn Error>>;
+pub trait UseCase<T, I> {
+    fn execute(input: I) -> Result<T, ApiError>;
 }

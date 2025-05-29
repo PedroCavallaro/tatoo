@@ -1,15 +1,21 @@
-use std::{env, sync::OnceLock};
+use std::{
+    env,
+    io::{Error, ErrorKind},
+    sync::OnceLock,
+};
 
 use diesel::{
-    r2d2::{ConnectionManager, Pool},
+    r2d2::{ConnectionManager, Pool, PooledConnection},
     MysqlConnection,
 };
 
 type MysqlPool = Pool<ConnectionManager<MysqlConnection>>;
 
+type MysqlPoolConnection = PooledConnection<ConnectionManager<MysqlConnection>>;
+
 pub static POOL: OnceLock<MysqlPool> = OnceLock::new();
 
-pub fn get_pool() -> &'static MysqlPool {
+fn get_pool() -> &'static MysqlPool {
     POOL.get_or_init(|| {
         let url = env::var("DATABASE_URL").unwrap();
 
@@ -17,4 +23,15 @@ pub fn get_pool() -> &'static MysqlPool {
 
         Pool::builder().build(manager).unwrap()
     })
+}
+
+pub fn get_connection() -> Result<MysqlPoolConnection, Error> {
+    let pool = get_pool();
+
+    let con = pool.get();
+
+    match con {
+        Ok(con) => Ok(con),
+        Err(_) => return Err(Error::new(ErrorKind::Other, "Pool error")),
+    }
 }
