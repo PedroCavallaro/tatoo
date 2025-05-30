@@ -1,23 +1,27 @@
-use std::{error::Error, fmt, io};
+use std::{fmt, io};
 
 #[derive(Debug)]
-pub struct ApiError {
+pub struct ApiError<'a> {
     pub code: u16,
-    pub message: String,
-    pub error: Option<Box<dyn Error>>,
+    pub message: &'a str,
 }
 
-impl From<io::Error> for ApiError {
-    fn from(err: io::Error) -> Self {
+impl<'a> ApiError<'a> {
+    pub fn new(code: u16, message: &'a str) -> Self {
+        Self { code, message }
+    }
+}
+
+impl<'a> From<io::Error> for ApiError<'a> {
+    fn from(_: io::Error) -> Self {
         ApiError {
             code: 500,
-            message: "Database connection error".to_string(),
-            error: Some(Box::new(err)),
+            message: "An error ocurred",
         }
     }
 }
 
-impl fmt::Display for ApiError {
+impl<'a> fmt::Display for ApiError<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.message)
     }

@@ -17,13 +17,20 @@ impl UserRepository {
 }
 
 impl UserRepositoryAbstract for UserRepository {
-    fn get_user(&self) -> Result<Vec<User>, ApiError> {
+    fn get_user_by_email(&self, user_email: &String) -> Result<Option<User>, ApiError> {
         let mut con = get_connection()?;
 
-        let res = user.load::<User>(&mut con);
+        let res = user
+            .filter(email.eq(user_email))
+            .first::<User>(&mut con)
+            .optional();
 
         println!("{:?}", res);
 
         Ok(res.unwrap())
+    }
+
+    fn get_users(&self) -> Result<Vec<User>, ApiError> {
+        todo!()
     }
 }
