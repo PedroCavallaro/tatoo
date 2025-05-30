@@ -17,7 +17,7 @@ impl UserRepository {
 }
 
 impl UserRepositoryAbstract for UserRepository {
-    fn get_user_by_email(&self, user_email: &String) -> Result<Option<User>, ApiError> {
+    fn get_user_by_email(&self, user_email: &str) -> Result<Option<User>, ApiError> {
         let mut con = get_connection()?;
 
         let res = user
