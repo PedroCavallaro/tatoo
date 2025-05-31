@@ -2,8 +2,14 @@ use diesel::*;
 use serde_derive::Deserialize;
 
 use crate::{
-    domain::{entities::user::User, error::ApiError},
-    infra::db::{conn::get_connection, schema::user::dsl::*},
+    domain::{
+        entities::user::{NewUser, User},
+        error::ApiError,
+    },
+    infra::db::{
+        conn::get_connection,
+        schema::user::{self, dsl::*, table},
+    },
 };
 
 use super::user_repository_abstract::UserRepositoryAbstract;
@@ -32,5 +38,22 @@ impl UserRepositoryAbstract for UserRepository {
 
     fn get_users(&self) -> Result<Vec<User>, ApiError> {
         todo!()
+    }
+
+    fn create_user(&self, dto: NewUser) -> Result<User, ApiError> {
+        let mut con = get_connection()?;
+
+        let res = con.transaction::<User, diesel::result::Error, _>(|con| {
+            diesel::insert_into(table).values(&dto).execute(con)?;
+
+            let created_user = table
+                .order(user::id.desc())
+                .select(User::as_select())
+                .first(con)?;
+
+            Ok(created_user)
+        });
+
+        Ok(res.unwrap())
     }
 }
