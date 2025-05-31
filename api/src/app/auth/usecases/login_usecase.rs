@@ -1,7 +1,9 @@
+use axum::Json;
+
 use crate::{
     app::{
         auth::http::dto::login_dto::LoginDTO,
-        user::infra::repositories::user_repository_abstract::UserRepositoryAbstract,
+        user::infra::repositories::{ user_repository_abstract::UserRepositoryAbstract},
     },
     common::usecase::UseCase,
     domain::{
@@ -33,8 +35,8 @@ impl LoginUseCase {
     }
 }
 
-impl UseCase<User, LoginDTO> for LoginUseCase {
-    fn execute(&self, dto: LoginDTO) -> Result<User, ApiError> {
+impl UseCase<User, Json<LoginDTO>> for LoginUseCase {
+    async fn execute(&self, Json(dto): Json<LoginDTO>) -> Result<User, ApiError> {
         let user = self.user_repository.get_user_by_email(&dto.email);
 
         if user.is_err() {
@@ -50,3 +52,6 @@ impl UseCase<User, LoginDTO> for LoginUseCase {
         Ok(created_user)
     }
 }
+
+
+

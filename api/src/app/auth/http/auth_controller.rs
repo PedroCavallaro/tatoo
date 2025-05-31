@@ -1,4 +1,4 @@
-use axum::{routing::post, Router};
+use axum::{routing::post, Json, Router};
 
 use crate::{
     app::{
@@ -6,13 +6,10 @@ use crate::{
         user::infra::repositories::user_repository::UserRepository,
     },
     common::usecase::UseCase,
-    domain::entities::user::User,
 };
 
-use super::dto::login_dto::LoginDTO;
-
 pub struct AuthController {
-    login_usecase: Box<dyn UseCase<User, LoginDTO>>,
+    login_usecase: LoginUseCase,
 }
 
 impl AuthController {
@@ -20,12 +17,12 @@ impl AuthController {
         let repo = Box::new(UserRepository::new());
 
         Self {
-            login_usecase: Box::new(LoginUseCase::new(repo)),
+            login_usecase: LoginUseCase::new(repo),
         }
     }
 
     pub fn routes(&self) -> Router {
-        // Router::new().route("/login", pos;
+        Router::new().route("/login", post(self.login_usecase.execute));
         todo!()
     }
 }
