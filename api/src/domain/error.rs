@@ -1,27 +1,48 @@
 use std::{fmt, io};
 
-#[derive(Debug)]
-pub struct ApiError<'a> {
+use axum::{
+    http::StatusCode,
+    response::{IntoResponse, Response},
+};
+use serde_derive::Serialize;
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ApiError {
     pub code: u16,
-    pub message: &'a str,
+    pub message: String,
 }
 
-impl<'a> ApiError<'a> {
-    pub fn new(code: u16, message: &'a str) -> Self {
-        Self { code, message }
-    }
-}
-
-impl<'a> From<io::Error> for ApiError<'a> {
-    fn from(_: io::Error) -> Self {
-        ApiError {
-            code: 500,
-            message: "An error ocurred",
+impl ApiError {
+    pub fn new(code: u16, message: &str) -> Self {
+        Self {
+            code,
+            message: message.into(),
         }
     }
 }
 
-impl<'a> fmt::Display for ApiError<'a> {
+impl IntoResponse for ApiError {
+    fn into_response(self) -> Response {
+        println!("Err");
+
+        let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
+
+        response.extensions_mut().insert(self);
+
+        response
+    }
+}
+
+impl From<io::Error> for ApiError {
+    fn from(_: io::Error) -> Self {
+        ApiError {
+            code: 500,
+            message: "An error ocurred".into(),
+        }
+    }
+}
+
+impl fmt::Display for ApiError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.message)
     }
