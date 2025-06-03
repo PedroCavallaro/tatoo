@@ -36,6 +36,19 @@ impl UserRepositoryAbstract for UserRepository {
         Ok(res.unwrap())
     }
 
+    fn get_user_by_sub(&self, user_sub: &str) -> Result<Option<User>, ApiError> {
+        let mut con = get_connection()?;
+
+        let res = user
+            .filter(email.eq(user_sub))
+            .first::<User>(&mut con)
+            .optional();
+
+        println!("{:?}", res);
+
+        Ok(res.unwrap())
+    }
+
     fn get_users(&self) -> Result<Vec<User>, ApiError> {
         todo!()
     }

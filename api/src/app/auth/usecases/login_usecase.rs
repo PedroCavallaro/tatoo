@@ -35,7 +35,7 @@ pub async fn execute(
     State(user_repository): State<Arc<UserRepository>>,
     Json(dto): Json<LoginDTO>,
 ) -> Result<Json<User>, ApiError> {
-    let user = user_repository.get_user_by_email(&dto.email);
+    let user = user_repository.get_user_by_sub(&dto.sub);
 
     if user.is_err() {
         return Err(ApiError::new(404, "User not found"));
