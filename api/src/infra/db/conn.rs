@@ -1,9 +1,11 @@
-use std::{env, io::Error, sync::OnceLock};
+use std::{io::Error, sync::OnceLock};
 
 use diesel::{
     r2d2::{ConnectionManager, Pool, PooledConnection},
     MysqlConnection,
 };
+
+use crate::infra::config::CONFIGS;
 
 type MysqlPool = Pool<ConnectionManager<MysqlConnection>>;
 
@@ -13,7 +15,7 @@ pub static POOL: OnceLock<MysqlPool> = OnceLock::new();
 
 fn get_pool() -> &'static MysqlPool {
     POOL.get_or_init(|| {
-        let url = env::var("DATABASE_URL").unwrap();
+        let url = &CONFIGS.database_url;
 
         let manager = ConnectionManager::<MysqlConnection>::new(url);
 

@@ -31,8 +31,6 @@ impl UserRepositoryAbstract for UserRepository {
             .first::<User>(&mut con)
             .optional();
 
-        println!("{:?}", res);
-
         Ok(res.unwrap())
     }
 
@@ -40,7 +38,7 @@ impl UserRepositoryAbstract for UserRepository {
         let mut con = get_connection()?;
 
         let res = user
-            .filter(email.eq(user_sub))
+            .filter(sub.eq(user_sub))
             .first::<User>(&mut con)
             .optional();
 
