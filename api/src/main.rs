@@ -1,6 +1,6 @@
 use std::net::SocketAddr;
 
-use api::{app::auth::http::auth_controller::AuthController, infra::config::CONFIGS};
+use api::{app::{auth::http::auth_controller::AuthController, place::http::place_controller::PlaceController}, infra::config::CONFIGS};
 use axum::{routing::get, Router};
 use dotenv::dotenv;
 
@@ -12,7 +12,8 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
-        .merge(AuthController::routes());
+        .merge(AuthController::routes())
+        .merge(PlaceController::routes());
 
     let listener = tokio::net::TcpListener::bind(&SocketAddr::from(([0, 0, 0, 0], port)))
         .await

@@ -6,6 +6,7 @@ use crate::app::{
     auth::usecases::login_usecase, user::infra::repositories::user_repository::UserRepository,
 };
 
+#[derive(Default, Debug)]
 pub struct AuthController {}
 
 impl AuthController {
@@ -19,11 +20,5 @@ impl AuthController {
         Router::new()
             .route("/login", post(login_usecase::execute))
             .with_state(repo)
-    }
-}
-
-impl Default for AuthController {
-    fn default() -> Self {
-        Self::new()
     }
 }
