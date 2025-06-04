@@ -8,8 +8,8 @@ use crate::{domain::entities::user::User, infra::config::CONFIGS};
 pub struct JwtStrategy {}
 
 impl JwtStrategy {
-    pub fn generate_token(user: User) -> String {
-        let key: Hmac<Sha256> = Hmac::new_from_slice(CONFIGS.jwt_secret.as_bytes()).unwrap();
+    pub fn generate_token(user: User) -> Result<String, Box<dyn std::error::Error>> {
+        let key: Hmac<Sha256> = Hmac::new_from_slice(CONFIGS.jwt_secret.as_bytes())?;
 
         let mut claims = BTreeMap::new();
 
@@ -19,6 +19,8 @@ impl JwtStrategy {
         claims.insert("name", &user.name);
         claims.insert("sub", sub);
 
-        claims.sign_with_key(&key).unwrap()
+        let token = claims.sign_with_key(&key)?;
+
+        Ok(token)
     }
 }

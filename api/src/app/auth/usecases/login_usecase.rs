@@ -39,14 +39,14 @@ pub async fn execute(
     }
 
     if let Ok(Some(_user)) = user {
-        let token = JwtStrategy::generate_token(_user);
+        let token = JwtStrategy::generate_token(_user)?;
 
         return Ok(Json(LoginResponseDTO {token}));
     }
 
     let created_user = create_user(user_repository, dto)?;
 
-    let token = JwtStrategy::generate_token(created_user);
+    let token = JwtStrategy::generate_token(created_user)?;
 
     Ok(Json(LoginResponseDTO {token}))
 }

@@ -12,6 +12,15 @@ pub struct ApiError {
     pub message: String,
 }
 
+impl From<Box<dyn std::error::Error>> for ApiError {
+    fn from(_: Box<dyn std::error::Error>) -> Self {
+        ApiError {
+            code: 500,
+            message: "An error occurred".into(),
+        }
+    }
+}
+
 impl ApiError {
     pub fn new(code: u16, message: &str) -> Self {
         Self {
