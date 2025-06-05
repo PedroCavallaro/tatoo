@@ -1,6 +1,11 @@
 use std::net::SocketAddr;
 
-use api::{app::{auth::http::auth_controller::AuthController, place::http::place_controller::PlaceController}, infra::config::CONFIGS};
+use api::{
+    app::{
+        auth::http::auth_controller::AuthController, place::http::place_controller::PlaceController,
+    },
+    infra::config::CONFIGS,
+};
 use axum::{routing::get, Router};
 use dotenv::dotenv;
 

@@ -1,10 +1,16 @@
 use std::sync::Arc;
 
-use axum::{extract::State, Json};
+use axum::{
+    extract::State,
+    Json,
+};
 
 use crate::{
     app::{
-        auth::{http::dto::{login_dto::LoginDTO, login_response_dto::LoginResponseDTO}, strategies::jwt::JwtStrategy},
+        auth::{
+            http::dto::{login_dto::LoginDTO, login_response_dto::LoginResponseDTO},
+            strategies::jwt::JwtStrategy,
+        },
         user::infra::repositories::{
             user_repository::UserRepository, user_repository_abstract::UserRepositoryAbstract,
         },
@@ -28,6 +34,7 @@ fn create_user(user_repository: Arc<UserRepository>, dto: LoginDTO) -> Result<Us
     Ok(res.unwrap())
 }
 
+
 pub async fn execute(
     State(user_repository): State<Arc<UserRepository>>,
     Json(dto): Json<LoginDTO>,
@@ -39,14 +46,16 @@ pub async fn execute(
     }
 
     if let Ok(Some(_user)) = user {
-        let token = JwtStrategy::generate_token(_user)?;
+        // let response = get_response(_user)?;
 
-        return Ok(Json(LoginResponseDTO {token}));
+    let token = JwtStrategy::generate_token(_user)?;
+
+        return Ok(Json(LoginResponseDTO { token }));
     }
 
     let created_user = create_user(user_repository, dto)?;
 
     let token = JwtStrategy::generate_token(created_user)?;
 
-    Ok(Json(LoginResponseDTO {token}))
+    Ok(Json(LoginResponseDTO { token }))
 }
