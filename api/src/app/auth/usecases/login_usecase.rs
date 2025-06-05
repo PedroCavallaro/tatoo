@@ -2,13 +2,16 @@ use std::sync::Arc;
 
 use axum::{
     extract::State,
+    http::header::SET_COOKIE,
+    response::{AppendHeaders, IntoResponse},
     Json,
 };
+use cookie::{Cookie, SameSite};
 
 use crate::{
     app::{
         auth::{
-            http::dto::{login_dto::LoginDTO, login_response_dto::LoginResponseDTO},
+            http::dto::login_dto::LoginDTO,
             strategies::jwt::JwtStrategy,
         },
         user::infra::repositories::{
@@ -34,11 +37,25 @@ fn create_user(user_repository: Arc<UserRepository>, dto: LoginDTO) -> Result<Us
     Ok(res.unwrap())
 }
 
+pub fn get_response(user: User) -> Result<impl IntoResponse, ApiError> {
+    let token = JwtStrategy::generate_token(user)?;
+
+    let cookie = Cookie::build(("auth_token", token.clone()))
+        .path("/")
+        .http_only(true)
+        .same_site(SameSite::Lax)
+        .build();
+
+
+    let headers = AppendHeaders([(SET_COOKIE, cookie.to_string())]);
+
+    Ok(headers)
+}
 
 pub async fn execute(
     State(user_repository): State<Arc<UserRepository>>,
     Json(dto): Json<LoginDTO>,
-) -> Result<Json<LoginResponseDTO>, ApiError> {
+) -> Result<impl IntoResponse, ApiError> {
     let user = user_repository.get_user_by_sub(&dto.sub);
 
     if user.is_err() {
@@ -46,16 +63,14 @@ pub async fn execute(
     }
 
     if let Ok(Some(_user)) = user {
-        // let response = get_response(_user)?;
+        let res = get_response(_user);
 
-    let token = JwtStrategy::generate_token(_user)?;
-
-        return Ok(Json(LoginResponseDTO { token }));
+        return Ok(res);
     }
 
     let created_user = create_user(user_repository, dto)?;
 
-    let token = JwtStrategy::generate_token(created_user)?;
+    let res = get_response(created_user);
 
-    Ok(Json(LoginResponseDTO { token }))
+    Ok(res)
 }

@@ -7,6 +7,6 @@ pub struct PlaceController {}
 
 impl PlaceController {
     pub fn routes() -> Router {
-        Router::new().route("/place/:id", get(get_place_info::execute))
+        Router::new().route("/place/{id}", get(get_place_info::execute))
     }
 }
