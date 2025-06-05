@@ -40,12 +40,11 @@ fn create_user(user_repository: Arc<UserRepository>, dto: LoginDTO) -> Result<Us
 pub fn get_response(user: User) -> Result<impl IntoResponse, ApiError> {
     let token = JwtStrategy::generate_token(user)?;
 
-    let cookie = Cookie::build(("auth_token", token.clone()))
+    let cookie = Cookie::build(("token", token))
         .path("/")
         .http_only(true)
         .same_site(SameSite::Lax)
         .build();
-
 
     let headers = AppendHeaders([(SET_COOKIE, cookie.to_string())]);
 
