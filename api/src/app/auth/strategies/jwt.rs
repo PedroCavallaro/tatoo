@@ -1,40 +1,58 @@
-use jwt::{Header, SignWithKey, Token, VerifyWithKey};
-use std::collections::BTreeMap;
+use chrono::{Duration, Utc};
+use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
+use serde::{Deserialize, Serialize};
 
 use crate::{
     domain::entities::user::{JwtPayload, User},
     infra::config::CONFIGS,
 };
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Claims {
+    sub: String,
+    email: String,
+    name: String,
+    exp: usize,
+}
+
 pub struct JwtStrategy {}
 
 impl JwtStrategy {
     pub fn generate_token(user: User) -> Result<String, Box<dyn std::error::Error>> {
-        let mut claims = BTreeMap::new();
+        let expiration = Utc::now()
+            .checked_add_signed(Duration::hours(1))
+            .expect("valid timestamp")
+            .timestamp() as usize;
 
-        let sub = &user.id.to_string();
+        let claims = Claims {
+            sub: user.id.to_string(),
+            email: user.email,
+            name: user.name,
+            exp: expiration,
+        };
 
-        claims.insert("email", &user.email);
-        claims.insert("name", &user.name);
-        claims.insert("sub", sub);
-
-        let token = claims.sign_with_key(&CONFIGS.jwt_secret)?;
+        let token = encode(
+            &Header::default(),
+            &claims,
+            &EncodingKey::from_secret(CONFIGS.jwt_secret.as_bytes()),
+        )?;
 
         Ok(token)
     }
 
     pub fn verify(token: &str) -> Result<JwtPayload, Box<dyn std::error::Error>> {
-        let res: Token<Header, BTreeMap<String, String>, _> =
-            token.verify_with_key(&CONFIGS.jwt_secret)?;
+        let token_data = decode::<Claims>(
+            token,
+            &DecodingKey::from_secret(CONFIGS.jwt_secret.as_bytes()),
+            &Validation::new(Algorithm::HS256),
+        )?;
 
-        let claims = res.claims();
+        let claims = token_data.claims;
 
-        let user = JwtPayload {
-            id: claims["id"].parse::<i64>()?,
-            email: String::from(&claims["email"]),
-            name: String::from(&claims["name"]),
-        };
-
-        Ok(user)
+        Ok(JwtPayload {
+            id: claims.sub.parse::<i64>()?,
+            email: claims.email,
+            name: claims.name,
+        })
     }
 }

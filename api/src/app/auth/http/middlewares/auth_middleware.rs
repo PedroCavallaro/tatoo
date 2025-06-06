@@ -22,7 +22,7 @@ pub async fn auth_middleware(
         .get(header::AUTHORIZATION)
         .and_then(|header| header.to_str().ok());
 
-    if auth_header.is_none(){
+    if auth_header.is_none() {
         return Err(StatusCode::UNAUTHORIZED);
     };
 
@@ -32,7 +32,7 @@ pub async fn auth_middleware(
         return Err(StatusCode::UNAUTHORIZED);
     }
 
-    req.extensions_mut().insert(user);
+    req.extensions_mut().insert(user.unwrap());
 
     let response = next.run(req).await;
 

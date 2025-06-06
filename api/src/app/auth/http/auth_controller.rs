@@ -18,7 +18,7 @@ impl AuthController {
         let repo = Arc::new(UserRepository::new());
 
         Router::new()
-            .route("/login", post(login_usecase::execute))
+            .route("/auth/login", post(login_usecase::execute))
             .with_state(repo)
     }
 }

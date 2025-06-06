@@ -2,7 +2,9 @@ use std::net::SocketAddr;
 
 use api::{
     app::{
-        auth::http::{auth_controller::AuthController, middlewares::auth_middleware::auth_middleware},
+        auth::http::{
+            auth_controller::AuthController, middlewares::auth_middleware::auth_middleware,
+        },
         place::http::place_controller::PlaceController,
     },
     infra::config::CONFIGS,

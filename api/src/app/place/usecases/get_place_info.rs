@@ -1,3 +1,10 @@
-use axum::extract::{Path, State};
+use axum::{
+    extract::Path,
+    Extension,
+};
 
-pub async fn execute(Path(id): Path<u32>) {}
+use crate::domain::entities::user::JwtPayload;
+
+pub async fn execute(Extension(user): Extension<JwtPayload>, Path(id): Path<u32>) {
+    println!("{:?}", user);
+}
