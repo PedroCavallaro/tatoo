@@ -2,7 +2,7 @@ use std::net::SocketAddr;
 
 use api::{
     app::{
-        auth::http::{auth_controller::AuthController, middlewares::auth_middleware::auth},
+        auth::http::{auth_controller::AuthController, middlewares::auth_middleware::auth_middleware},
         place::http::place_controller::PlaceController,
     },
     infra::config::CONFIGS,
@@ -20,7 +20,7 @@ async fn main() {
         .route("/", get(|| async { "Hello, World!" }))
         .merge(AuthController::routes())
         .merge(PlaceController::routes())
-        .layer(axum::middleware::from_fn(auth));
+        .layer(axum::middleware::from_fn(auth_middleware));
 
     let listener = tokio::net::TcpListener::bind(&SocketAddr::from(([0, 0, 0, 0], port)))
         .await
