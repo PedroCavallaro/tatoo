@@ -22,13 +22,11 @@ pub async fn auth(
         .get(header::AUTHORIZATION)
         .and_then(|header| header.to_str().ok());
 
-    let auth_header = if let Some(auth_header) = auth_header {
-        auth_header
-    } else {
+    if auth_header.is_none(){
         return Err(StatusCode::UNAUTHORIZED);
     };
 
-    let user = verify(auth_header);
+    let user = verify(auth_header.unwrap());
 
     if user.is_none() {
         return Err(StatusCode::UNAUTHORIZED);
