@@ -26,7 +26,13 @@ pub async fn auth_middleware(
         return Err(StatusCode::UNAUTHORIZED);
     };
 
-    let user = verify(auth_header.unwrap());
+    let token : Vec<&str> = auth_header.unwrap().split(" ").collect();
+
+    if token.len() != 2 || token[0] != "Bearer" {
+        return Err(StatusCode::UNAUTHORIZED);
+    }
+
+    let user = verify(token[1]);
 
     if user.is_none() {
         return Err(StatusCode::UNAUTHORIZED);
