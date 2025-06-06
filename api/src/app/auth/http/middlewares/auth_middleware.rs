@@ -1,84 +1,48 @@
 use axum::{
-    body::Body, extract::Request, http::{header,  StatusCode}, response::Response
+    extract::Request,
+    http::{header, HeaderMap, StatusCode},
+    middleware::Next,
+    response::Response,
 };
-use futures_util::future::BoxFuture;
-use tower::{Service, Layer};
-use std::{convert::Infallible, task::{Context, Poll}};
 
-use crate::app::auth::strategies::jwt::JwtStrategy;
+use crate::{app::auth::strategies::jwt::JwtStrategy, domain::entities::user::JwtPayload};
 
-#[derive(Clone)]
-pub struct AuthLayer;
+pub async fn auth(
+    headers: HeaderMap,
+    mut req: Request,
+    next: Next,
+) -> Result<Response, StatusCode> {
+    if req.uri().path().contains("auth") {
+        let response = next.run(req).await;
 
-impl<S> Layer<S> for AuthLayer {
-    type Service = AuthMiddleware<S>;
-
-    fn layer(&self, inner: S) -> Self::Service {
-        AuthMiddleware { inner }
+        return Ok(response);
     }
+
+    let auth_header = headers
+        .get(header::AUTHORIZATION)
+        .and_then(|header| header.to_str().ok());
+
+    let auth_header = if let Some(auth_header) = auth_header {
+        auth_header
+    } else {
+        return Err(StatusCode::UNAUTHORIZED);
+    };
+
+    let user = verify(auth_header);
+
+    if user.is_none() {
+        return Err(StatusCode::UNAUTHORIZED);
+    }
+
+    req.extensions_mut().insert(user);
+
+    let response = next.run(req).await;
+
+    Ok(response)
 }
 
-#[derive(Clone)]
-pub struct AuthMiddleware<S> {
-    inner: S,
-}
+fn verify(token: &str) -> Option<JwtPayload> {
+    let user = JwtStrategy::verify(token);
 
-impl<S> Service<Request> for AuthMiddleware<S>
-where
-    S: Service<Request<Body>, Response = Response<Body>, Error = Infallible> + Clone + Send + 'static,
-    S::Future: Send + 'static,
-    S::Error: Into<Response> + Send,
-{
-    type Response = Response;
-    type Error = S::Error;
-    type Future = BoxFuture<'static, Result<Response, S::Error>>;
-    
-
-    fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        self.inner.poll_ready(cx)
-    }
-
-    fn call(&mut self, req: Request) -> Self::Future {
-        if req.uri().path().contains("auth") {
-            let fut = self.inner.call(req);
-
-            return Box::pin(fut);
-        }
-
-
-        let auth_header = req.headers()
-            .get(header::AUTHORIZATION)
-            .and_then(|h| h.to_str().ok());
-
-        let token = match auth_header {
-            Some(token) => token.to_string(),
-            None => {
-                return Box::pin(async {
-                    Ok(Response::builder()
-                        .status(StatusCode::UNAUTHORIZED)
-                        .body(Body::from("Missing auth header"))
-                        .unwrap())
-                });
-            }
-        };
-
-
-            let fut = self.inner.call(req);
-
-            match JwtStrategy::verify(&token) {
-                Ok(_) => 
-        Box::pin(async move {
-            
-            let response = fut.await?;
-
-                Ok(response)
-        }),
-                Err(_) => Box::pin(async move {
-            
-            let response = fut.await?;
-
-                Ok(response)
-        })
-        }
-    }
+    user.ok()
 }

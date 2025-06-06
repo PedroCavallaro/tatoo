@@ -10,10 +10,7 @@ use cookie::{Cookie, SameSite};
 
 use crate::{
     app::{
-        auth::{
-            http::dto::login_dto::LoginDTO,
-            strategies::jwt::JwtStrategy,
-        },
+        auth::{http::dto::login_dto::LoginDTO, strategies::jwt::JwtStrategy},
         user::infra::repositories::{
             user_repository::UserRepository, user_repository_abstract::UserRepositoryAbstract,
         },

@@ -2,13 +2,13 @@ use std::net::SocketAddr;
 
 use api::{
     app::{
-        auth::http::{auth_controller::AuthController, middlewares::auth_middleware::AuthLayer}, place::http::place_controller::PlaceController,
+        auth::http::{auth_controller::AuthController, middlewares::auth_middleware::auth},
+        place::http::place_controller::PlaceController,
     },
     infra::config::CONFIGS,
 };
-use axum::{ routing::get, Router};
+use axum::{routing::get, Router};
 use dotenv::dotenv;
-use tower::ServiceBuilder;
 
 #[tokio::main]
 async fn main() {
@@ -20,9 +20,7 @@ async fn main() {
         .route("/", get(|| async { "Hello, World!" }))
         .merge(AuthController::routes())
         .merge(PlaceController::routes())
-        .layer(
-            ServiceBuilder::new().layer(AuthLayer{})
-        );
+        .layer(axum::middleware::from_fn(auth));
 
     let listener = tokio::net::TcpListener::bind(&SocketAddr::from(([0, 0, 0, 0], port)))
         .await
