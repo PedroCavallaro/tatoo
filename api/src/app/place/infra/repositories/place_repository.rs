@@ -1,11 +1,9 @@
-use diesel::{
-    query_dsl::methods::{FilterDsl, SelectDsl},
-    ExpressionMethods, OptionalExtension, RunQueryDsl, SelectableHelper,
-};
+use diesel::prelude::*;
 
 use crate::{
     app::place::http::dto::get_place_paginated_dto::GetPlacePaginatedDTO,
     domain::{entities::place::Place, error::ApiError},
+    helpers::pagination::get_limit_offset,
     infra::db::{
         conn::get_connection,
         schema::place::{dsl::*, id},
@@ -50,7 +48,13 @@ impl PlaceRepository {
 
         let mut con = get_connection()?;
 
-        let places = place.load::<Place>(&mut con);
+        let (limit, offset) = get_limit_offset(pagination.page, pagination.limit);
+
+        let places = place
+            .select(Place::as_select())
+            .offset(offset as i64)
+            .limit(limit as i64)
+            .load::<Place>(&mut con);
 
         match places {
             Ok(val) => Ok(val),
