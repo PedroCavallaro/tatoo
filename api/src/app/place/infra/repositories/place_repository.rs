@@ -4,6 +4,7 @@ use diesel::{
 };
 
 use crate::{
+    app::place::http::dto::get_place_paginated_dto::GetPlacePaginatedDTO,
     domain::{entities::place::Place, error::ApiError},
     infra::db::{
         conn::get_connection,
@@ -33,7 +34,20 @@ impl PlaceRepository {
         }
     }
 
-    pub fn get_places_list(&self) -> Result<Vec<Place>, ApiError> {
+    pub fn get_places_list(
+        &self,
+        pagination: Option<GetPlacePaginatedDTO>,
+    ) -> Result<Vec<Place>, ApiError> {
+        let pagination = match pagination {
+            Some(val) => val,
+            None => GetPlacePaginatedDTO {
+                q: "".to_string(),
+                page: 1,
+                limit: 10,
+                order: "ASC".to_string(),
+            },
+        };
+
         let mut con = get_connection()?;
 
         let places = place.load::<Place>(&mut con);
