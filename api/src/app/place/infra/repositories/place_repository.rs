@@ -1,8 +1,10 @@
+use diesel::{query_dsl::methods::FilterDsl, ExpressionMethods, OptionalExtension, RunQueryDsl};
+
 use crate::{
-    domain::error::ApiError,
+    domain::{entities::place::Place, error::ApiError},
     infra::db::{
         conn::get_connection,
-        schema::place::{self},
+        schema::place::{dsl::*, id},
     },
 };
 
@@ -14,9 +16,17 @@ impl PlaceRepository {
         Self {}
     }
 
-    pub fn get_place_by_id(&self, id: u32) -> Result<(), ApiError> {
-        let con = get_connection()?;
+    pub fn get_place_by_id(&self, place_id: i64) -> Result<Option<Place>, ApiError> {
+        let mut con = get_connection()?;
 
-        todo!()
+        let found_place = place
+            .filter(id.eq(place_id))
+            .first::<Place>(&mut con)
+            .optional();
+
+        match found_place {
+            Ok(val) => Ok(Some(val.unwrap())),
+            Err(_) => Ok(None),
+        }
     }
 }

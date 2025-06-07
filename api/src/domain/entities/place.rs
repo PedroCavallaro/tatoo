@@ -11,6 +11,7 @@ pub struct Place {
     pub id: i64,
     pub name: String,
     pub picture: String,
+    pub sub: String,
     pub email: String,
     pub whatsapp_number: Option<i64>,
     pub created_at: NaiveDateTime,
