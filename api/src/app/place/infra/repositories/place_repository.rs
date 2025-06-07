@@ -1,4 +1,7 @@
-use diesel::{query_dsl::methods::FilterDsl, ExpressionMethods, OptionalExtension, RunQueryDsl};
+use diesel::{
+    query_dsl::methods::{FilterDsl, SelectDsl},
+    ExpressionMethods, OptionalExtension, RunQueryDsl, SelectableHelper,
+};
 
 use crate::{
     domain::{entities::place::Place, error::ApiError},
@@ -27,6 +30,17 @@ impl PlaceRepository {
         match found_place {
             Ok(val) => Ok(Some(val.unwrap())),
             Err(_) => Ok(None),
+        }
+    }
+
+    pub fn get_places_list(&self) -> Result<Vec<Place>, ApiError> {
+        let mut con = get_connection()?;
+
+        let places = place.load::<Place>(&mut con);
+
+        match places {
+            Ok(val) => Ok(val),
+            Err(_) => Ok(vec![]),
         }
     }
 }
