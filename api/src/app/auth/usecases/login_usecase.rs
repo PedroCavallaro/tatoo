@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use axum::{
     extract::State,
-    http::header::SET_COOKIE,
+    http::{header::SET_COOKIE, StatusCode},
     response::{AppendHeaders, IntoResponse},
     Json,
 };
@@ -55,7 +55,10 @@ pub async fn execute(
     let user = user_repository.get_user_by_sub(&dto.sub);
 
     if user.is_err() {
-        return Err(ApiError::new(404, "User not found"));
+        return Err(ApiError::new(
+            StatusCode::INTERNAL_SERVER_ERROR.as_u16(),
+            "Erro ao fazer login",
+        ));
     }
 
     if let Ok(Some(_user)) = user {

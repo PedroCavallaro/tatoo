@@ -1,5 +1,1 @@
-
-pub async fn get_places_list() {
-
-
-}
+pub async fn get_places_list() {}
