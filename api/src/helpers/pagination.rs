@@ -1,7 +1,10 @@
+use serde::Serialize;
+
+#[derive(Debug, Serialize)]
 pub struct PaginationDTO<T> {
-    data: T,
-    page: i64,
-    limit: i64,
+    pub data: T,
+    pub page: i64,
+    pub limit: i64,
 }
 
 pub fn get_limit_offset(page: i32, limit: i32) -> (i32, i32) {

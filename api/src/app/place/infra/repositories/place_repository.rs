@@ -34,11 +34,11 @@ impl PlaceRepository {
 
     pub fn get_places_list(
         &self,
-        pagination: Option<GetPlacePaginatedDTO>,
+        pagination: Option<&GetPlacePaginatedDTO>,
     ) -> Result<Vec<Place>, ApiError> {
         let pagination = match pagination {
             Some(val) => val,
-            None => GetPlacePaginatedDTO {
+            None => &GetPlacePaginatedDTO {
                 q: "".to_string(),
                 page: 1,
                 limit: 10,
