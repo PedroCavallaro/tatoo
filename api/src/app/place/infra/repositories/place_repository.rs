@@ -1,7 +1,9 @@
 use diesel::prelude::*;
 
 use crate::{
-    app::place::{domain::place::Place, http::dto::get_place_paginated_dto::GetPlacePaginatedDTO},
+    app::place::{
+        domain::entities::place::Place, http::dto::get_place_paginated_dto::GetPlacePaginatedDTO,
+    },
     domain::error::ApiError,
     helpers::pagination::get_limit_offset,
     infra::db::{
