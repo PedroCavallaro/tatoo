@@ -3,15 +3,12 @@ use std::sync::Arc;
 use axum::{
     extract::{Path, State},
     http::StatusCode,
- Json,
+    Json,
 };
 
 use crate::{
     app::place::infra::repositories::place_repository::PlaceRepository,
-    domain::{
-        entities::place::Place,
-        error::ApiError,
-    },
+    domain::{entities::place::Place, error::ApiError},
 };
 
 pub async fn execute(
