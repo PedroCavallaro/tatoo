@@ -1,3 +1,6 @@
+use serde::Deserialize;
+
+#[derive(Debug, Deserialize)]
 pub struct GetPlacePaginatedDTO {
     pub q: String,
     pub page: i32,

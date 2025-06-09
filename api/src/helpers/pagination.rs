@@ -1,4 +1,4 @@
-pub struct PafinationDTO<T> {
+pub struct PaginationDTO<T> {
     data: T,
     page: i64,
     limit: i64,
