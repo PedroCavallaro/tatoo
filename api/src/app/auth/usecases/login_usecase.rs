@@ -11,14 +11,11 @@ use cookie::{Cookie, SameSite};
 use crate::{
     app::{
         auth::{http::dto::login_dto::LoginDTO, strategies::jwt::JwtStrategy},
-        user::infra::repositories::{
+        user::{domain::entities::{new_user::NewUser, user::User}, infra::repositories::{
             user_repository::UserRepository, user_repository_abstract::UserRepositoryAbstract,
-        },
+        }},
     },
-    domain::{
-        entities::user::{NewUser, User},
-        error::ApiError,
-    },
+    domain::error::ApiError,
 };
 
 fn create_user(user_repository: Arc<UserRepository>, dto: LoginDTO) -> Result<User, ApiError> {

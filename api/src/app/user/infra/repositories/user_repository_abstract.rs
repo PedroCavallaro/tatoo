@@ -1,6 +1,6 @@
-use crate::domain::{
-    entities::user::{NewUser, User},
-    error::ApiError,
+use crate::{
+    app::user::domain::entities::{new_user::NewUser, user::User},
+    domain::error::ApiError,
 };
 
 pub trait UserRepositoryAbstract {

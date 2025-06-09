@@ -1,8 +1,5 @@
 use chrono::*;
-use diesel::{
-    prelude::{Insertable, Queryable},
-    Selectable,
-};
+use diesel::prelude::*;
 use serde_derive::Serialize;
 
 use crate::infra::db::schema::user;
@@ -18,20 +15,4 @@ pub struct User {
     pub email: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
-}
-
-#[derive(Debug, Insertable)]
-#[diesel(table_name = user)]
-pub struct NewUser {
-    pub email: String,
-    pub sub: String,
-    pub name: String,
-    pub picture: String,
-}
-
-#[derive(Clone, Debug)]
-pub struct JwtPayload {
-    pub id: i64,
-    pub name: String,
-    pub email: String,
 }

@@ -2,10 +2,8 @@ use diesel::*;
 use serde_derive::Deserialize;
 
 use crate::{
-    domain::{
-        entities::user::{NewUser, User},
-        error::ApiError,
-    },
+    app::user::domain::entities::{new_user::NewUser, user::User},
+    domain::error::ApiError,
     infra::db::{
         conn::get_connection,
         schema::user::{self, dsl::*, table},

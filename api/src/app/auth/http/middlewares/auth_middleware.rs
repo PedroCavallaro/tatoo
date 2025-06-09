@@ -5,7 +5,8 @@ use axum::{
     response::Response,
 };
 
-use crate::{app::auth::strategies::jwt::JwtStrategy, domain::entities::user::JwtPayload};
+use crate::app::auth::{domain::entities::jwt_payload::JwtPayload, strategies::jwt::JwtStrategy};
+
 
 pub async fn auth_middleware(
     headers: HeaderMap,

@@ -3,7 +3,7 @@ use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, 
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    domain::entities::user::{JwtPayload, User},
+    app::{auth::domain::entities::jwt_payload::JwtPayload, user::domain::entities::user::User},
     infra::config::CONFIGS,
 };
 

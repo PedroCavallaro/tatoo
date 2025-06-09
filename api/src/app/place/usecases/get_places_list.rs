@@ -8,11 +8,8 @@ use axum::{
 
 use crate::{
     app::place::{
-        http::dto::get_place_paginated_dto::GetPlacePaginatedDTO,
-        infra::repositories::place_repository::PlaceRepository,
-    },
-    domain::{entities::place::Place, error::ApiError},
-    helpers::pagination::PaginationDTO,
+        domain::place::Place, http::dto::get_place_paginated_dto::GetPlacePaginatedDTO, infra::repositories::place_repository::PlaceRepository
+    }, domain::error::ApiError, helpers::pagination::PaginationDTO
 };
 
 pub async fn execute(

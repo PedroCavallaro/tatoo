@@ -6,10 +6,7 @@ use axum::{
     Json,
 };
 
-use crate::{
-    app::place::infra::repositories::place_repository::PlaceRepository,
-    domain::{entities::place::Place, error::ApiError},
-};
+use crate::{app::place::{domain::place::Place, infra::repositories::place_repository::PlaceRepository}, domain::error::ApiError};
 
 pub async fn execute(
     Path(id): Path<i64>,
