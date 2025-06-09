@@ -3,19 +3,18 @@ use std::sync::Arc;
 use axum::{
     extract::{Path, State},
     http::StatusCode,
-    Extension, Json,
+ Json,
 };
 
 use crate::{
     app::place::infra::repositories::place_repository::PlaceRepository,
     domain::{
-        entities::{place::Place, user::JwtPayload},
+        entities::place::Place,
         error::ApiError,
     },
 };
 
 pub async fn execute(
-    Extension(user): Extension<JwtPayload>,
     Path(id): Path<i64>,
     State(place_repository): State<Arc<PlaceRepository>>,
 ) -> Result<Json<Place>, ApiError> {
