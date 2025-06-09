@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use axum::{
     extract::{Query, State},
-    http::StatusCode,
+    http::StatusCode, Json,
 };
 
 use crate::{
@@ -10,14 +10,16 @@ use crate::{
         http::dto::get_place_paginated_dto::GetPlacePaginatedDTO,
         infra::repositories::place_repository::PlaceRepository,
     },
-    domain::{entities::place::Place, error::ApiError},
+    domain::{entities::place::Place, error::ApiError}, helpers::pagination::PaginationDTO,
 };
 
-pub async fn get_places_list(
+pub async fn execute(
     Query(dto): Query<GetPlacePaginatedDTO>,
     State(place_repository): State<Arc<PlaceRepository>>,
-) -> Result<Vec<Place>, ApiError> {
+) -> Result<
+                Json<PaginationDTO<Place>>, ApiError> {
     let places = place_repository.get_places_list(Some(dto));
+
 
     match places {
         Ok(val) => Ok(val),
