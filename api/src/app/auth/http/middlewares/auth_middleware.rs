@@ -7,7 +7,6 @@ use axum::{
 
 use crate::app::auth::{domain::entities::jwt_payload::JwtPayload, strategies::jwt::JwtStrategy};
 
-
 pub async fn auth_middleware(
     headers: HeaderMap,
     mut req: Request,

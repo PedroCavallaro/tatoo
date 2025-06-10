@@ -11,9 +11,12 @@ use cookie::{Cookie, SameSite};
 use crate::{
     app::{
         auth::{http::dto::login_dto::LoginDTO, strategies::jwt::JwtStrategy},
-        user::{domain::entities::{new_user::NewUser, user::User}, infra::repositories::{
-            user_repository::UserRepository, user_repository_abstract::UserRepositoryAbstract,
-        }},
+        user::{
+            domain::entities::{new_user::NewUser, user::User},
+            infra::repositories::{
+                user_repository::UserRepository, user_repository_abstract::UserRepositoryAbstract,
+            },
+        },
     },
     domain::error::ApiError,
 };
