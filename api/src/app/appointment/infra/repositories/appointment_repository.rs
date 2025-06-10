@@ -9,9 +9,14 @@ use crate::{
     },
 };
 
+#[derive(Default, Debug)]
 pub struct AppointmentRepository {}
 
 impl AppointmentRepository {
+    pub fn new() -> Self {
+        Self {}
+    }
+
     pub fn get_user_appointments(&self, id: i64) -> Result<Vec<Appointment>, ApiError> {
         let mut conn = get_connection()?;
 
