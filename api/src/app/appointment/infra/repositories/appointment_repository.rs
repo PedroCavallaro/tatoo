@@ -1,7 +1,9 @@
 use diesel::prelude::*;
 
 use crate::{
-    app::appointment::domain::entities::appointment::Appointment,
+    app::appointment::domain::entities::{
+        appointment::Appointment, new_appointment::NewAppointment,
+    },
     domain::error::ApiError,
     infra::db::{
         conn::get_connection,
@@ -17,10 +19,12 @@ impl AppointmentRepository {
         Self {}
     }
 
-    pub fn create_appointment(&self, user: i64, place: i64) -> Result<(), ApiError> {
+    pub fn create_appointment(&self, dto: NewAppointment) -> Result<(), ApiError> {
         let mut conn = get_connection()?;
 
-        todo!()
+        let created_appointment = diesel::insert_into(table).values(dto).execute(&mut conn);
+
+        Ok(())
     }
 
     pub fn get_user_appointments(&self, id: i64) -> Result<Vec<Appointment>, ApiError> {
