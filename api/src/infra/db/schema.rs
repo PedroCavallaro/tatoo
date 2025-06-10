@@ -2,7 +2,7 @@
 
 diesel::table! {
     appointment (user_id, place_id) {
-        date -> Date,
+        date -> Timestamp,
         user_id -> Bigint,
         place_id -> Bigint,
     }
