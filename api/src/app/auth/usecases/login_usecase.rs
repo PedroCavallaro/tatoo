@@ -29,6 +29,7 @@ fn create_user(user_repository: Arc<UserRepository>, dto: LoginDTO) -> Result<Us
         picture: dto.picture,
     };
 
+    println!("test");
     let res = user_repository.create_user(new_user);
 
     Ok(res.unwrap())
