@@ -1,4 +1,4 @@
-name: Rust Lint (API)
+name: Check lint and Warnings (API)
 
 on:
   push:
