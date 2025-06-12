@@ -1,4 +1,4 @@
-name: Rust Lint (API)
+name: Check lint and Warnings (API)
 
 on:
   push:
@@ -33,4 +33,6 @@ jobs:
       - name: Run cargo clippy
         run: cargo clippy --all-targets --all-features -- -D warnings
 
+      - name: Run cargo fmt
+        run: cargo fmt --check
 
