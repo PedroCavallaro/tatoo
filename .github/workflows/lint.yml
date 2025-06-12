@@ -23,4 +23,4 @@ jobs:
           components: clippy
 
       - name: Run cargo clippy
-        run: cargo clippy --all-targets --all-features -- -D warnings
+        run: cargo clippy --manifest-path api/Cargo.toml --all-targets --all-features -- -D warnings
